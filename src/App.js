@@ -15,18 +15,19 @@ export default function App() {
   const [heroes, setHeroes] = useState([]);
   const [myheroes, setMyheroes] = useState([]);
   const [searchText,setSearchText] = useState("iron");
-  
 
+  // Search once for iron
   useEffect(() => {
-    const axiosCallString = superheroapiURL+"/search/"+searchText;
+    const axiosCallString = superheroapiURL+"/search/iron";
    
     console.log(axiosCallString);
     axios.get(axiosCallString).then((response) => {
       setResponse(response.data.response);
       setHeroes(response.data.results);
     });
-  });
+  }, []);
 
+  // Then search each time the search button clicked
   const onSearch = () => {
     const axiosCallString = superheroapiURL+"/search/"+searchText;
    
@@ -47,12 +48,9 @@ export default function App() {
     setMyheroes([...myheroes,...addHero]);
   },[heroes, myheroes]);
 
-
-
   const onRemove = useCallback((id) => { 
     setMyheroes(myheroes.filter((h)=>h.id!==id))
   },[myheroes]);
-
 
   const handleChange = useCallback((e,id,field,collection) => {
     let editHeroes = {};
