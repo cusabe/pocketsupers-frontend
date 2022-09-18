@@ -7,32 +7,44 @@ import { FormGroup, Label, Input, Button }
 
 
 const accessToken = "195368556243435";
-const superheroapiURL = "https://superheroapi.com/api.php/" + accessToken;
+const superheroAPI = "https://www.superheroapi.com/api.php/" + accessToken;
 
+// const pslocal = "http://localhost:5000/api"
+const psaws = "http://54.66.252.110:5000/api"
+const pocketsupersAPI = psaws
 
 export default function App() {
+  // Searching for heroes on left side of screen
+  const [searchText,setSearchText] = useState("iron");
   const [response, setResponse] = useState(null);
   const [heroes, setHeroes] = useState([]);
+  
+  // Display myheroes collection on right side
   const [myheroes, setMyheroes] = useState([]);
-  const [searchText,setSearchText] = useState("iron");
 
-  // Search once for iron
   useEffect(() => {
-    const axiosCallString = superheroapiURL+"/search/iron";
-   
-    console.log(axiosCallString);
-    axios.get(axiosCallString).then((response) => {
+    // Load the collection
+    const pocketsupersAPIsearch = pocketsupersAPI+"/getAll";
+    console.log("load collection",pocketsupersAPIsearch);
+    axios.get(pocketsupersAPIsearch).then((response) => {
+      setMyheroes(response.data);
+      console.log("response.data is", response.data)
+    });
+
+    // Search for some heroes to start with
+    const superheroAPIsearch = superheroAPI+"/search/iron";
+    console.log("first search",superheroAPIsearch);
+    axios.get(superheroAPIsearch).then((response) => {
       setResponse(response.data.response);
       setHeroes(response.data.results);
     });
   }, []);
 
-  // Then search each time the search button clicked
+  // Search again each time the search button clicked
   const onSearch = () => {
-    const axiosCallString = superheroapiURL+"/search/"+searchText;
-   
-    console.log(axiosCallString);
-    axios.get(axiosCallString).then((response) => {
+    const superheroAPIsearch = superheroAPI+"/search/"+searchText;
+    console.log("search",superheroAPIsearch);
+    axios.get(superheroAPIsearch).then((response) => {
       if (response.data.response === "error") {
         console.log(response.data);      
         setResponse(response.data.error);
@@ -43,14 +55,41 @@ export default function App() {
     });
   };
 
+  // Only add a hero if their id isn't already in the collection
   const onAdd = useCallback((id) => { 
-    const addHero=heroes.filter((h)=>h.id===id);
-    setMyheroes([...myheroes,...addHero]);
+    console.log(myheroes);
+    // console.log(myheroes[0]._id);
+    if (myheroes.filter((h)=>h.id===id).length > 0) {
+      console.log("hero",id,"is already in the collection");
+    } else {
+      // Add hero to collection here in React app
+      const addHero=heroes.filter((h)=>h.id===id);
+      setMyheroes([...myheroes,...addHero]);
+      
+      // Then save it to API record
+      const pocketsupersAPIadd = pocketsupersAPI+"/post";
+      console.log("save to collection",pocketsupersAPIadd);
+      axios.post(pocketsupersAPIadd,addHero[0]).then((response) => {
+        console.log("response.data is", response.data)
+      });
+
+    }
   },[heroes, myheroes]);
 
+
   const onRemove = useCallback((id) => { 
+    // Remove hero from collection here in React
     setMyheroes(myheroes.filter((h)=>h.id!==id))
+
+    // Then delete it from API record
+    const pocketsupersAPIremove = pocketsupersAPI+`/delete/${id}`
+    console.log("delete from collection",pocketsupersAPIremove);
+    axios.delete(pocketsupersAPIremove).then((response) => {
+      console.log("response.data is", response.data)
+    });
+
   },[myheroes]);
+
 
   const handleChange = useCallback((e,id,field,collection) => {
     let editHeroes = {};
@@ -59,7 +98,6 @@ export default function App() {
     } else {
       editHeroes = heroes;
     }
-
     const newHeroes = editHeroes.map(hero => {
       if (hero.id === id) {
         switch(field) {
@@ -103,17 +141,31 @@ export default function App() {
 
   },[heroes,myheroes]);
 
+
+  // Save changes to stats for heroes in the collection
+  const onSave = useCallback((id) => { 
+    // Update the API record
+    const updateHero=myheroes.filter((h)=>h.id===id);
+    const pocketsupersAPIupdate = pocketsupersAPI+`/update/${id}`;
+    console.log("update stats in collection",pocketsupersAPIupdate);
+    axios.patch(pocketsupersAPIupdate,updateHero[0]).then((response) => {
+      console.log("response.data is", response.data)
+    });
+
+  },[myheroes]);
+
+
   return (
     <>
-      <section class="header">
+      <section className="header">
         <h1>Pocket Supers</h1>
         <h3>A React.js app by Apps by Ben C</h3>
         <h2>Find all your favourite superheroes and add them to your collection</h2>
 
       </section>
 
-      <section class="columns">
-        <div class="column">
+      <section className="columns">
+        <div className="column">
           <h4>Search for a Superhero here</h4>
             <FormGroup className="form">
               <Label className="label">Search here</Label>
@@ -142,6 +194,7 @@ export default function App() {
                   onAdd={onAdd}
                   onRemove={onRemove}
                   handleChange={handleChange}
+                  onSave={onSave}
                 />
               );
             })
@@ -149,8 +202,9 @@ export default function App() {
 
         </div>
 
-        <div class="column">
-            <h4>Your superhero collection</h4>
+        <div className="column">
+            <h4>Your Pocket Supers collection</h4>
+            <p>Pocket Supers: {myheroes&&myheroes.length}</p>
             {myheroes &&
             myheroes.length > 0 &&
             myheroes.map((hero, index) => {
@@ -162,6 +216,7 @@ export default function App() {
                   onAdd={onAdd}
                   onRemove={onRemove}
                   handleChange={handleChange}
+                  onSave={onSave}
                 />
               );
             })

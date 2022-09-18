@@ -2,7 +2,8 @@ import { Card, Row, Col, CardBody, CardImg, CardTitle,
   FormGroup, Label, Input, Button }
    from "reactstrap";
 
-const HeroCard = ({ hero, index, collection, onAdd, onRemove, handleChange }) => {
+const HeroCard = ({ hero, index, collection, 
+  onAdd, onRemove, handleChange, onSave}) => {
 
   return (
     <>
@@ -75,7 +76,8 @@ const HeroCard = ({ hero, index, collection, onAdd, onRemove, handleChange }) =>
                 </FormGroup>
                 {collection ? 
                 <>
-                  <Button className="button">
+                  <Button className="button"
+                  onClick={() => onSave(hero.id)}>
                     Save
                   </Button>
                   <Button className="button"
