@@ -11,7 +11,7 @@ const superheroAPI = "https://www.superheroapi.com/api.php/" + accessToken;
 
 // const pslocal = "http://localhost:5000/api"
 // const psaws = "http://54.66.252.110:5000/api"
-const psaws = "http://pocketsupersapi.appsbybenc.com:5000/api"
+const psaws = "https://pocketsupersapi.appsbybenc.com/api"
 
 const pocketsupersAPI = psaws
 
