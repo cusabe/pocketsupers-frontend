@@ -1,32 +1,21 @@
-// React imports
 import axios from "axios";
-import { useQuery, useMutation} from '@apollo/client';
-// import { gql } from '@apollo/client';
-
 import React, { useState, useEffect, useCallback } from "react";
+import HeroCard from "./components/herocard";
+import "./App.css";
 import { FormGroup, Label, Input, Button }
    from "reactstrap";
-   import "./App.css";
-
-import HeroCard from "./components/herocard";
-import {ListSuperheroes} from "./components/gql/queries.js";
-import {CreateSuperhero, UpdateSuperhero, DeleteSuperhero} from "./components/gql/mutations.js";
 
 
-
-//  Superheroapi will use axios
 const accessToken = "195368556243435";
 const superheroAPI = "https://www.superheroapi.com/api.php/" + accessToken;
 
-// Pocket supers Rest API via Axios
 // const pslocal = "http://localhost:5000/api"
 // const psaws = "http://54.66.252.110:5000/api"
 const psaws = "https://pocketsupersapi.appsbybenc.com/api"
+
 const pocketsupersAPI = psaws
 
-// Pocket supers GraphQL API via Apollo
-
-function App() {
+export default function App() {
   // Searching for heroes on left side of screen
   const [searchText,setSearchText] = useState("iron");
   const [response, setResponse] = useState(null);
@@ -35,49 +24,15 @@ function App() {
   // Display myheroes collection on right side
   const [myheroes, setMyheroes] = useState([]);
 
-  // Load the collection once and store state
-  const { 
-    loading: myHeroesLoading,
-    error: myHeroesError,
-    data: myHeroesData
-  } = useQuery(ListSuperheroes);
-
-  // Set up mutations
-  const [
-    createSuperhero,
-    {
-      data: createSuperheroData,
-      // loading: createSuperheroLoading,
-      // error: createSuperheroError,
-    },
-  ] = useMutation(CreateSuperhero);
-
-  const [
-    updateSuperhero,
-    {
-      data: updateSuperheroData,
-      // loading: createSuperheroLoading,
-      // error: createSuperheroError,
-    },
-  ] = useMutation(UpdateSuperhero);
-
-  const [
-    deleteSuperhero,
-    {
-      data: deleteSuperheroData,
-      // loading: createSuperheroLoading,
-      // error: createSuperheroError,
-    },
-  ] = useMutation(DeleteSuperhero);
-  
   useEffect(() => {
-    // add hero collection when it loads
-    if (myHeroesData) {
-      setMyheroes(myHeroesData.listSuperheroes);
-    }
-  }, [myHeroesData]);
+    // Load the collection
+    const pocketsupersAPIsearch = pocketsupersAPI+"/getAll";
+    console.log("load collection",pocketsupersAPIsearch);
+    axios.get(pocketsupersAPIsearch).then((response) => {
+      setMyheroes(response.data);
+      console.log("response.data is", response.data)
+    });
 
-  useEffect(() => {
     // Search for some heroes to start with
     const superheroAPIsearch = superheroAPI+"/search/iron";
     console.log("first search",superheroAPIsearch);
@@ -116,30 +71,12 @@ function App() {
       // Then save it to API record
       const pocketsupersAPIadd = pocketsupersAPI+"/post";
       console.log("save to collection",pocketsupersAPIadd);
-      // axios.post(pocketsupersAPIadd,addHero[0]).then((response) => {
-      //   console.log("response.data is", response.data)
-      // });
-
-      // Then create the graphql record with a mutation
-      console.log(createSuperhero);
-      console.log(addHero[0]);
-      const addStrippedHero = 
-        { name: addHero[0].name,
-          id: addHero[0].id,
-          image: { url: addHero[0].image.url},
-          powerstats: { 
-            strength: addHero[0].powerstats.strength,
-            intelligence: addHero[0].powerstats.intelligence,
-            speed: addHero[0].powerstats.speed,
-            durability: addHero[0].powerstats.durability,
-            power: addHero[0].powerstats.power,
-            combat: addHero[0].powerstats.combat
-          } 
-        }
-      createSuperhero({variables: {input: addStrippedHero}});
+      axios.post(pocketsupersAPIadd,addHero[0]).then((response) => {
+        console.log("response.data is", response.data)
+      });
 
     }
-  },[heroes, myheroes, createSuperhero]);
+  },[heroes, myheroes]);
 
 
   const onRemove = useCallback((id) => { 
@@ -149,13 +86,11 @@ function App() {
     // Then delete it from API record
     const pocketsupersAPIremove = pocketsupersAPI+`/delete/${id}`
     console.log("delete from collection",pocketsupersAPIremove);
-    // axios.delete(pocketsupersAPIremove).then((response) => {
-    //   console.log("response.data is", response.data)
-    // });
-    console.log(id);
-    deleteSuperhero({variables: {input: id}});
+    axios.delete(pocketsupersAPIremove).then((response) => {
+      console.log("response.data is", response.data)
+    });
 
-  },[myheroes,deleteSuperhero]);
+  },[myheroes]);
 
 
   const handleChange = useCallback((e,id,field,collection) => {
@@ -215,30 +150,11 @@ function App() {
     const updateHero=myheroes.filter((h)=>h.id===id);
     const pocketsupersAPIupdate = pocketsupersAPI+`/update/${id}`;
     console.log("update stats in collection",pocketsupersAPIupdate);
-    // axios.patch(pocketsupersAPIupdate,updateHero[0]).then((response) => {
-    //   console.log("response.data is", response.data)
-    // });
-    console.log(updateHero)
-    const updateStrippedHero = 
-        { name: updateHero[0].name,
-          id: updateHero[0].id,
-          image: { url: updateHero[0].image.url},
-          powerstats: { 
-            strength: updateHero[0].powerstats.strength,
-            intelligence: updateHero[0].powerstats.intelligence,
-            speed: updateHero[0].powerstats.speed,
-            durability: updateHero[0].powerstats.durability,
-            power: updateHero[0].powerstats.power,
-            combat: updateHero[0].powerstats.combat
-          } 
-        }
-    updateSuperhero({variables: {input: updateStrippedHero}});
+    axios.patch(pocketsupersAPIupdate,updateHero[0]).then((response) => {
+      console.log("response.data is", response.data)
+    });
 
-  },[myheroes, updateSuperhero]);
-
-
-  // if (myHeroesLoading) return <p>Loading...</p>;
-  // if (myHeroesError) return <p>Error :(</p>;
+  },[myheroes]);
 
 
   return (
@@ -247,11 +163,8 @@ function App() {
         <h1>Pocket Supers</h1>
         <h3>A React.js app by Apps by Ben C</h3>
         <h2>Find all your favourite superheroes and add them to your collection</h2>
-      </section>
 
-      {/* <section>
-        <HelloTest />
-      </section> */}
+      </section>
 
       <section className="columns">
         <div className="column">
@@ -292,9 +205,9 @@ function App() {
         </div>
 
         <div className="column">
-          <h4>Your Pocket Supers collection</h4>
-          <p>Pocket Supers: {myheroes&&myheroes.length}</p>
-          {myheroes &&
+            <h4>Your Pocket Supers collection</h4>
+            <p>Pocket Supers: {myheroes&&myheroes.length}</p>
+            {myheroes &&
             myheroes.length > 0 &&
             myheroes.map((hero, index) => {
               return (
@@ -315,5 +228,3 @@ function App() {
     </>
   );
 }
-
-export default App;
