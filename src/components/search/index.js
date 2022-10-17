@@ -15,7 +15,7 @@ import "../../App.css";
 import HeroCard from "../herocard";
 
 
-function Search() {
+function Search(reload) {
   // Search for heroes and list them on left side of screen
   const [searchText,setSearchText] = useState("iron");
   const [response, setResponse] = useState(null);
@@ -70,12 +70,14 @@ function Search() {
           } 
         }
       createSuperhero({variables: {input: addStrippedHero}});
+      console.log(reload);
+      reload.reload();
       } else {
         console.log("hero",id,"is already in the collection:",result.data.getSuperheroByID);
       }
     })
   },[heroes
-    , createSuperhero, getSuperheroByID
+    , createSuperhero, getSuperheroByID, reload
   ]);
 
     const handleChange = useCallback((e,id,field) => {

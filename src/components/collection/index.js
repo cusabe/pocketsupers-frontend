@@ -1,22 +1,14 @@
 // React imports
-import { useQuery, useMutation} from '@apollo/client';
+import { useMutation} from '@apollo/client';
 
 import React, { useState, useEffect, useCallback } from "react";
 import "../../App.css";
 import HeroCard from "../herocard";
 
-import {ListSuperheroes} from "../../gql/queries.js";
 import {UpdateSuperhero, DeleteSuperhero} from "../../gql/mutations.js";
 
-function Collection() {
+function Collection(myHeroesData) {
   const [myheroes, setMyheroes] = useState([]);
-
-  // Load the collection once and store state
-  const { data: myHeroesData } 
-    = useQuery(ListSuperheroes, {
-        pollInterval: 500
-        }
-    );
 
   // Set up mutations
   const [ updateSuperhero ] = useMutation(UpdateSuperhero);
@@ -24,8 +16,9 @@ function Collection() {
   
   useEffect(() => {
     // add hero collection when it loads
-    if (myHeroesData) {
-      setMyheroes(myHeroesData.listSuperheroes);
+    if (myHeroesData&&myHeroesData.myHeroesData) {
+      console.log("UseEffect heroesdata:",myHeroesData.myHeroesData);
+      setMyheroes(myHeroesData.myHeroesData.listSuperheroes);
     }
   }, [myHeroesData]);
 
