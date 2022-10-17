@@ -41,8 +41,8 @@ export const UpdateSuperhero = gql`
 `;
 
 export const DeleteSuperhero = gql`
-    mutation deleteSuperhero($input: String!) { 
-        deleteSuperhero (input: $input) {
+    mutation deleteSuperhero($id: String!) { 
+        deleteSuperhero (id: $id) {
             name
             id
             image {

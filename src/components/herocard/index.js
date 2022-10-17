@@ -2,7 +2,7 @@ import { Card, Row, Col, CardBody, CardImg, CardTitle,
   FormGroup, Label, Input, Button }
    from "reactstrap";
 
-const HeroCard = ({ hero, index, collection, 
+const HeroCard = ({ hero, isCollection, 
   onAdd, onRemove, handleChange, onSave}) => {
 
   return (
@@ -29,7 +29,7 @@ const HeroCard = ({ hero, index, collection,
                   <Input className="stat-input"
                     type="number"
                     name="int"
-                    onChange={(e) => handleChange(e,hero.id,"intelligence",collection)}
+                    onChange={(e) => handleChange(e,hero.id,"intelligence")}
                     value={hero&&hero.powerstats&&
                       hero.powerstats.intelligence}
                   />
@@ -37,7 +37,7 @@ const HeroCard = ({ hero, index, collection,
                   <Input className="stat-input"
                     type="number"
                     name="str"
-                    onChange={(e) => handleChange(e,hero.id,"strength",collection)}
+                    onChange={(e) => handleChange(e,hero.id,"strength")}
                     value={hero&&hero.powerstats&&
                       hero.powerstats.strength}
                   />
@@ -45,7 +45,7 @@ const HeroCard = ({ hero, index, collection,
                   <Input className="stat-input"
                     type="number"
                     name="spe"
-                    onChange={(e) => handleChange(e,hero.id,"speed",collection)}
+                    onChange={(e) => handleChange(e,hero.id,"speed")}
                     value={hero&&hero.powerstats&&
                       hero.powerstats.speed}
                   />
@@ -53,7 +53,7 @@ const HeroCard = ({ hero, index, collection,
                   <Input className="stat-input"
                     type="number"
                     name="dur"
-                    onChange={(e) => handleChange(e,hero.id,"durability",collection)}
+                    onChange={(e) => handleChange(e,hero.id,"durability")}
                     value={hero&&hero.powerstats&&
                       hero.powerstats.durability}
                   />
@@ -61,7 +61,7 @@ const HeroCard = ({ hero, index, collection,
                   <Input className="stat-input"
                     type="number"
                     name="pow"
-                    onChange={(e) => handleChange(e,hero.id,"power",collection)}
+                    onChange={(e) => handleChange(e,hero.id,"power")}
                     value={hero&&hero.powerstats&&
                       hero.powerstats.power}
                   />
@@ -69,12 +69,12 @@ const HeroCard = ({ hero, index, collection,
                   <Input className="stat-input"
                     type="number"
                     name="com"
-                    onChange={(e) => handleChange(e,hero.id,"combat",collection)}
+                    onChange={(e) => handleChange(e,hero.id,"combat")}
                     value={hero&&hero.powerstats&&
                       hero.powerstats.combat}
                   />
                 </FormGroup>
-                {collection ? 
+                {isCollection ? 
                 <>
                   <Button className="button"
                   onClick={() => onSave(hero.id)}>
