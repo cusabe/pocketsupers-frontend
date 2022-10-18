@@ -1,13 +1,11 @@
 // Apollo imports
-import { useQuery} from '@apollo/client';
+import {useQuery} from '@apollo/client';
 import {ListSuperheroes} from "./gql/queries.js";
 
 // React imports
 import "./App.css";
 import Search from "./components/search";
 import Collection from "./components/collection";
-
-
 
 
 function App() {

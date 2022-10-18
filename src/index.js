@@ -7,10 +7,14 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import {CollectionContextProvider} from "./contexts";
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <ApolloProvider client={client}>
-    <App />
+    <CollectionContextProvider>
+      <App />    
+    </CollectionContextProvider>
   </ApolloProvider>,
 );
 

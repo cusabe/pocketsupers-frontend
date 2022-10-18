@@ -16,8 +16,9 @@ import HeroCard from "../herocard";
 
 
 function Search(reload) {
+
   // Search for heroes and list them on left side of screen
-  const [searchText,setSearchText] = useState("iron");
+  const [searchText, setSearchText] = useState("iron");
   const [response, setResponse] = useState(null);
   const [heroes, setHeroes] = useState([]);
 

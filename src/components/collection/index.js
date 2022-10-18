@@ -1,14 +1,23 @@
 // React imports
 import { useMutation} from '@apollo/client';
+import {UpdateSuperhero, DeleteSuperhero} from "../../gql/mutations.js";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import "../../App.css";
 import HeroCard from "../herocard";
 
-import {UpdateSuperhero, DeleteSuperhero} from "../../gql/mutations.js";
+
+
+import {useContext} from "react";
+
+// Context
+import {CollectionContext} from "../../contexts";
+
 
 function Collection(myHeroesData) {
-  const [myheroes, setMyheroes] = useState([]);
+//   const [myheroes, setMyheroes] = useState([]);
+  const {myheroes,setMyheroes} = useContext(CollectionContext);
+
 
   // Set up mutations
   const [ updateSuperhero ] = useMutation(UpdateSuperhero);
@@ -20,7 +29,7 @@ function Collection(myHeroesData) {
       console.log("UseEffect heroesdata:",myHeroesData.myHeroesData);
       setMyheroes(myHeroesData.myHeroesData.listSuperheroes);
     }
-  }, [myHeroesData]);
+  }, [myHeroesData,setMyheroes]);
 
   const onRemove = useCallback((id) => { 
     // Remove hero from collection here in React
@@ -30,7 +39,7 @@ function Collection(myHeroesData) {
     console.log(id);
     deleteSuperhero({variables: {id: id}});
 
-  },[myheroes,deleteSuperhero]);
+  },[myheroes,deleteSuperhero,setMyheroes]);
 
   const handleChange = useCallback((e,id,field) => {
     const newHeroes = myheroes.map(hero => {
@@ -70,7 +79,7 @@ function Collection(myHeroesData) {
 
     setMyheroes(newHeroes)
 
-  },[myheroes]);
+  },[myheroes, setMyheroes]);
 
 
   // Save changes to stats for heroes in the collection
